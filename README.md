@@ -58,7 +58,7 @@ SignalWorkflow local login
 ==========================
 
 Super Admin : inv.mdm@innovant.ai
-Admin       : poorvith.devang@flame.edu.in
+Admin       : @flame.edu.in
 Password    : <generated>
 
 OTP inbox   : http://localhost:8025
