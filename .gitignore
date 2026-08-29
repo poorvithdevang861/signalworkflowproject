@@ -1,0 +1,67 @@
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Environment
+.env
+.env.local
+docker/.env.generated
+docker/login-credentials.txt
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Windows / Mac
+desktop.ini
+.DS_Store
+
+# Node
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+dist-ssr/
+coverage/
+*.local
+
+# IDEs
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vercel
+.vercel/
+
+# Storage uploads
+MDM_Backend/storage/uploads/**
+!MDM_Backend/storage/uploads/
+!MDM_Backend/storage/uploads/.gitkeep
+
+# CSV exports / generated data
+*.csv
+
+# Optional: if all generated data lives here
+MDM_DataLayer/*.csv
+
+# Project-specific folders
+BackEnd/Photos/
+BackEnd/generated_pdfs/
+FrontEnd/font/
+FrontEnd/node_modules/

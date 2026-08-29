@@ -1,0 +1,54 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info
+
+# Node
+MDM_Frontend/node_modules
+MDM_Frontend/dist
+
+# IDE
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+desktop.ini
+Thumbs.db
+
+# Environment (will be injected via Docker)
+MDM_Backend/.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Build artifacts
+coverage/
+dist-ssr/
+
+# Documentation (not needed in container)
+MDM_Documentation/
+*.md
+!README.md
+
+# Testing data CSVs (already in context via volume)
+MDM_TestingData&Sql/*.csv
+
+# Storage uploads (runtime generated)
+MDM_Backend/storage/uploads/*
+!MDM_Backend/storage/uploads/.gitkeep

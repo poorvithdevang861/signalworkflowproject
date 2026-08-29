@@ -1,0 +1,132 @@
+# ─────────────────────────────────────────────────────────────
+# SignalWorkflow — Docker Compose Stack
+# One command: docker compose up --build -d
+#
+# Services:
+#   db       — PostgreSQL 16 (port 5432)
+#   redis    — Redis 7       (port 6379)
+#   mailpit  — Email testing (SMTP 1025, Web UI 8025)
+#   backend  — FastAPI (port 8000)
+#   frontend — React/Vite + Express    (port 3030)
+#   db-init  — One-shot migrations & seed runner
+# ─────────────────────────────────────────────────────────────
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: signalworkflow-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: signalmdm2025
+      POSTGRES_DB: SignalMDM
+    ports:
+      - "5433:5432"
+    volumes:
+      - signalmdm_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d SignalMDM"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ── Redis ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: signalworkflow-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Mailpit (Local Email Testing) ───────────────────────
+  # Web UI: http://localhost:8025
+  # SMTP:   mailpit:1025 (used by backend)
+  # If Mailpit fails, backend falls back to logging OTP to
+  # console (no-SMTP mode) — see auth_service.py line 162.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: signalworkflow-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # Web UI — browse captured emails
+      - "1025:1025"   # SMTP — backend sends here
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  # ── Backend (FastAPI) ──────────────────────────
+  backend:
+    build:
+      context: ./MDM_Backend
+      dockerfile: Dockerfile
+    container_name: signalworkflow-backend
+    restart: unless-stopped
+    env_file:
+      - ./docker/.env.docker
+      - ./docker/.env.generated
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  # ── Frontend (Vite/React + Express) ─────────────────────
+  frontend:
+    build:
+      context: ./MDM_Frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000/api/v1
+        VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+    container_name: signalworkflow-frontend
+    restart: unless-stopped
+    environment:
+      PORT: 3030
+      HOST: 0.0.0.0
+      VITE_API_URL: http://localhost:8000/api/v1
+    ports:
+      - "3030:3030"
+    depends_on:
+      - backend
+
+  # ── Database Initialization (one-shot) ──────────────────
+  db-init:
+    image: python:3.12-slim
+    container_name: signalworkflow-db-init
+    env_file:
+      - ./docker/.env.generated
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: signalmdm2025
+      PGDATABASE: SignalMDM
+    volumes:
+      - ./docker:/scripts:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    entrypoint: >
+      bash -c "
+        apt-get update -qq && apt-get install -y -qq postgresql-client > /dev/null 2>&1 &&
+        pip install --quiet psycopg2-binary bcrypt > /dev/null 2>&1 &&
+        bash /scripts/db-init.sh
+      "
+    restart: "no"
+
+volumes:
+  signalmdm_pgdata:
+    driver: local
