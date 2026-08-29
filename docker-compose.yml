@@ -64,7 +64,7 @@ services:
   # ── Backend (FastAPI) ──────────────────────────
   backend:
     build:
-      context: ./MDM_Backend
+      context: ./Backend
       dockerfile: Dockerfile
     container_name: signalworkflow-backend
     restart: unless-stopped
@@ -84,7 +84,7 @@ services:
   # ── Frontend (Vite/React + Express) ─────────────────────
   frontend:
     build:
-      context: ./MDM_Frontend
+      context: ./Frontend
       dockerfile: Dockerfile
       args:
         VITE_API_URL: http://localhost:8000/api/v1
