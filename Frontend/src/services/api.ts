@@ -1,7 +1,7 @@
 /**
  * src/services/api.ts
  * -------------------
- * Base HTTP client for the SignalMDM FastAPI backend.
+ * Base HTTP client for the SignalWorkflow FastAPI backend.
  *
  * Auth strategy (cookie-based):
  *   - `accessToken`  — httpOnly cookie set by backend on login (AES-encrypted JWT).

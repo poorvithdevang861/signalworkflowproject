@@ -11,9 +11,9 @@ type Tab = 'users' | 'roles';
 /* ─── Role key → badge color ─────────────────────────────── */
 function roleBadgeClass(roleKey: string | null): string {
   if (!roleKey) return 'badge--gray';
-  if (roleKey === 'super_admin')    return 'badge--purple';
-  if (roleKey === 'admin')          return 'badge--blue';
-  if (roleKey === 'data_architect') return 'badge--cyan';
+  if (roleKey === 'super_admin')    return 'badge--leaf';
+  if (roleKey === 'admin')          return 'badge--green';
+  if (roleKey === 'data_architect') return 'badge--mint';
   if (roleKey === 'data_manager')   return 'badge--amber';
   if (roleKey === 'executive')      return 'badge--green';
   return 'badge--gray';

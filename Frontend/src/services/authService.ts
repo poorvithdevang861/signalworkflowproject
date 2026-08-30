@@ -1,7 +1,7 @@
 /**
  * src/services/authService.ts
  * ----------------------------
- * Handles all authentication operations against the SignalMDM backend.
+ * Handles all authentication operations against the SignalWorkflow backend.
  *
  * Security design:
  *   - Uses FingerprintJS to generate a stable device ID on first call.

@@ -96,9 +96,9 @@ export default function MainLayout() {
         </nav>
 
         <div className="sw-sidebar__footer">
-          {!collapsed && (
-            <div className="sw-sidebar__user">
-              <div className="sw-sidebar__avatar">{initials}</div>
+          <div className={`sw-sidebar__user${collapsed ? ' sw-sidebar__user--compact' : ''}`}>
+            <div className="sw-sidebar__avatar" title={admin?.email}>{initials}</div>
+            {!collapsed && (
               <div className="sw-sidebar__user-info">
                 <span className="sw-sidebar__user-name">
                   {isLoading ? '…' : (admin?.username ?? 'Admin')}
@@ -107,8 +107,8 @@ export default function MainLayout() {
                   {admin?.role?.replace('_', ' ') ?? 'admin'}
                 </span>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           <button
             type="button"
             className="sw-sidebar__logout-btn"

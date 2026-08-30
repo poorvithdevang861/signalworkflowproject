@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────
-# SignalMDM Frontend — Multi-stage Dockerfile
+# SignalWorkflow Frontend — Multi-stage Dockerfile
 # Stage 1: Build Vite/React app
 # Stage 2: Serve via Express (serverClient.js)
 # ─────────────────────────────────────────────────────────────
