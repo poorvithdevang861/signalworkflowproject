@@ -47,11 +47,59 @@
 
 .rbac-section-hdr {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
+.rbac-section-hdr > div:first-child {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.rbac-section-hdr__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .rbac-section-hdr__actions {
+    width: auto;
+    flex: 1 1 18rem;
+    justify-content: flex-end;
+  }
+}
+
+.rbac-toolbar__search {
+  flex: 1 1 10rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.rbac-toolbar__add {
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .rbac-toolbar__search {
+    flex: 1 1 12rem;
+    max-width: 16rem;
+  }
+
+  .rbac-toolbar__add {
+    flex: 0 0 auto;
+  }
 }
 
 .rbac-section-hdr h2 {
@@ -83,6 +131,9 @@
   gap: 12px;
   box-shadow: 0 6px 18px rgba(45, 90, 61, 0.06);
   transition: box-shadow .15s, border-color .15s;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .rbac-user-card:hover {
@@ -150,19 +201,27 @@
 }
 
 .rbac-user-card__footer {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
-  flex-wrap: wrap;
   border-top: 1px solid rgba(74, 148, 98, 0.16);
   padding-top: 12px;
 }
 
 .rbac-user-card__footer .btn {
-  flex: 1;
   justify-content: center;
   min-width: 0;
   font-size: 12px;
-  padding: 6px 10px;
+  padding: 6px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 520px) {
+  .rbac-user-card__footer {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .rbac-roles-layout {
@@ -394,6 +453,8 @@
   padding: 10px 14px;
   margin-top: 4px;
   transition: all .15s ease-in-out;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .rbac-user-card__2fa-section:hover {
@@ -460,4 +521,63 @@
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .rbac-user-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rbac-user-card {
+    padding: 14px 16px;
+  }
+
+  .rbac-roles-layout {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .rbac-perms-panel__body {
+    max-height: none;
+  }
+
+  .rbac-user-card__2fa-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rbac-user-card__2fa-section .btn--xs {
+    width: 100%;
+    justify-content: center;
+    height: 2rem;
+  }
+
+  .adm-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+  }
+
+  .adm-tab {
+    flex-shrink: 0;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rbac-user-card__footer {
+    grid-template-columns: 1fr;
+  }
+
+  .rbac-user-card__name,
+  .rbac-user-card__email {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    word-break: break-word;
+  }
+
+  .rbac-2fa-status-label {
+    white-space: normal;
+  }
 }

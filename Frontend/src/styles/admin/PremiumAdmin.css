@@ -415,3 +415,43 @@
   .adm-hero__row { flex-direction: column; }
   .adm-hero__actions { justify-content: flex-start; }
 }
+
+@media (max-width: 768px) {
+  .sw-content:has(.adm-page),
+  .mdm-content:has(.adm-page) {
+    overflow: auto;
+    padding: 0.85rem;
+  }
+
+  .adm-page {
+    overflow: visible;
+    gap: 10px;
+  }
+
+  .adm-page.adm-page--scroll {
+    overflow: visible;
+  }
+
+  .adm-hero {
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .adm-hero__title {
+    font-size: 1.2rem;
+    word-break: break-word;
+  }
+
+  .adm-hero__sub {
+    font-size: 0.8125rem;
+  }
+
+  .adm-workspace {
+    overflow: visible;
+    min-height: 0;
+  }
+
+  .adm-page .rbac-roles-layout {
+    min-height: 0;
+  }
+}

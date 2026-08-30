@@ -268,9 +268,16 @@ function UsersTab({ roles }: { roles: PlatformRole[] }) {
           <h2>Platform Users</h2>
           <p>Manage high-level stakeholders and their access roles</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <input className="form-input" style={{ width: 220 }} placeholder="Search users…" value={search} onChange={e => setSearch(e.target.value)} />
-          <button type="button" className="btn btn--primary" onClick={() => setShowCreate(true)}>+ Add User</button>
+        <div className="rbac-section-hdr__actions">
+          <input
+            className="form-input rbac-toolbar__search"
+            placeholder="Search users…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <button type="button" className="btn btn--primary rbac-toolbar__add" onClick={() => setShowCreate(true)}>
+            + Add User
+          </button>
         </div>
       </div>
 

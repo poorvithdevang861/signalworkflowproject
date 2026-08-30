@@ -1,14 +1,27 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePermissions } from '../context/PermissionsContext';
 import './MainLayout.css';
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const { admin, isLoading, logout } = useAuth();
   const { canAccess } = usePermissions();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileNavOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileNavOpen]);
 
   const handleLogout = async () => {
     await logout();
@@ -23,9 +36,23 @@ export default function MainLayout() {
     || admin?.role === 'super_admin'
     || admin?.role === 'admin';
 
+  const shellClass = [
+    'sw-shell',
+    collapsed ? 'sw-shell--collapsed' : '',
+    mobileNavOpen ? 'sw-shell--mobile-open' : '',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={`sw-shell${collapsed ? ' sw-shell--collapsed' : ''}`}>
-      <aside className="sw-sidebar">
+    <div className={shellClass}>
+      <button
+        type="button"
+        className="sw-sidebar-backdrop"
+        aria-label="Close navigation menu"
+        onClick={() => setMobileNavOpen(false)}
+        tabIndex={mobileNavOpen ? 0 : -1}
+      />
+
+      <aside className="sw-sidebar" aria-label="Sidebar navigation">
         <div className="sw-sidebar__brand">
           <span className="sw-sidebar__logo" aria-hidden>
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -39,19 +66,25 @@ export default function MainLayout() {
               </defs>
             </svg>
           </span>
-          {!collapsed && (
-            <span className="sw-sidebar__brand-text">
-              Signal<strong>Workflow</strong>
-            </span>
-          )}
+          <span className="sw-sidebar__brand-text">
+            Signal<strong>Workflow</strong>
+          </span>
           <button
             type="button"
-            className="sw-sidebar__collapse-btn"
+            className="sw-sidebar__collapse-btn sw-sidebar__collapse-btn--desktop"
             onClick={() => setCollapsed(c => !c)}
-            title={collapsed ? 'Expand' : 'Collapse'}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? '›' : '‹'}
+          </button>
+          <button
+            type="button"
+            className="sw-sidebar__close-btn sw-sidebar__close-btn--mobile"
+            onClick={() => setMobileNavOpen(false)}
+            aria-label="Close navigation menu"
+          >
+            ✕
           </button>
         </div>
 
@@ -62,7 +95,7 @@ export default function MainLayout() {
             className={({ isActive }) =>
               `sw-sidebar__link${isActive ? ' sw-sidebar__link--active' : ''}`
             }
-            title={collapsed ? 'Dashboard' : undefined}
+            onClick={() => setMobileNavOpen(false)}
           >
             <span className="sw-sidebar__link-icon" aria-hidden>
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -72,7 +105,7 @@ export default function MainLayout() {
                 <rect x="10" y="10" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
               </svg>
             </span>
-            {!collapsed && <span className="sw-sidebar__link-label">Dashboard</span>}
+            <span className="sw-sidebar__link-label">Dashboard</span>
           </NavLink>
 
           {canSeePlatform && (
@@ -81,7 +114,7 @@ export default function MainLayout() {
               className={({ isActive }) =>
                 `sw-sidebar__link${isActive ? ' sw-sidebar__link--active' : ''}`
               }
-              title={collapsed ? 'Platform Users' : undefined}
+              onClick={() => setMobileNavOpen(false)}
             >
               <span className="sw-sidebar__link-icon" aria-hidden>
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -90,7 +123,7 @@ export default function MainLayout() {
                   <path d="M13 7.5h3M14.5 6v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </span>
-              {!collapsed && <span className="sw-sidebar__link-label">Platform Users</span>}
+              <span className="sw-sidebar__link-label">Platform Users</span>
             </NavLink>
           )}
         </nav>
@@ -98,16 +131,14 @@ export default function MainLayout() {
         <div className="sw-sidebar__footer">
           <div className={`sw-sidebar__user${collapsed ? ' sw-sidebar__user--compact' : ''}`}>
             <div className="sw-sidebar__avatar" title={admin?.email}>{initials}</div>
-            {!collapsed && (
-              <div className="sw-sidebar__user-info">
-                <span className="sw-sidebar__user-name">
-                  {isLoading ? '…' : (admin?.username ?? 'Admin')}
-                </span>
-                <span className="sw-sidebar__user-role">
-                  {admin?.role?.replace('_', ' ') ?? 'admin'}
-                </span>
-              </div>
-            )}
+            <div className="sw-sidebar__user-info">
+              <span className="sw-sidebar__user-name">
+                {isLoading ? '…' : (admin?.username ?? 'Admin')}
+              </span>
+              <span className="sw-sidebar__user-role">
+                {admin?.role?.replace('_', ' ') ?? 'admin'}
+              </span>
+            </div>
           </div>
           <button
             type="button"
@@ -118,7 +149,7 @@ export default function MainLayout() {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
               <path d="M6 2H3.5A1.5 1.5 0 002 3.5v9A1.5 1.5 0 003.5 14H6M10 11l3-3-3-3M13 8H6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            {!collapsed && <span>Sign out</span>}
+            <span>Sign out</span>
           </button>
         </div>
       </aside>
@@ -126,6 +157,17 @@ export default function MainLayout() {
       <div className="sw-main">
         <header className="sw-topbar">
           <div className="sw-topbar__left">
+            <button
+              type="button"
+              className="sw-topbar__menu-btn"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label="Open navigation menu"
+              aria-expanded={mobileNavOpen}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+                <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
             <span className="sw-topbar__badge">SignalWorkflow</span>
           </div>
           {admin && (
